@@ -29,7 +29,7 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///your_sqlite_database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SECRET_KEY'] = 'your_secret_key'  # Replace with a secure secret key
+app.config['SECRET_KEY'] = '$0pi@123'
 
 
 db = SQLAlchemy(app)
@@ -91,8 +91,7 @@ def get_db():
     return g.db
 
 
-    #creating Registration Form
-# Registration Form - Removed Email Validation
+# Registration Form 
 class RegistrationForm(Form):
     addhar = StringField('Addhar', [validators.DataRequired("Please Enter your Addhar Number"), validators.Regexp(regex=r'\d{12}$', message="Addhar must be of 12 Digits")])
     name = StringField('Name', [validators.Length(min=1, max=100)])
@@ -106,7 +105,7 @@ class RegistrationForm(Form):
     confirm_password = PasswordField('Confirm Password')
     accept_tos = BooleanField('I accept the Terms of Service and Privacy Notice', [DataRequired()])
 
-# Registration Route - Removed Email and Addhar Check
+# Registration Route 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     form = RegistrationForm(request.form)
@@ -114,13 +113,11 @@ def register():
         addhar = form.addhar.data
         mobile = form.mobile.data
         name = form.name.data
-        email = form.email.data  # No email validation
+        email = form.email.data  
         password = sha256_crypt.encrypt(str(form.password.data))
         timestamp = int(time.mktime(datetime.utcnow().timetuple()))
         date_register = str(timestamp)
         ip = request.environ.get('HTTP_X_REAL_IP', request.remote_addr)
-
-        # Insert the user data into the database without checking email and addhar
         new_user = User(name=name, email=email, mobile=mobile, addhar=addhar, password=password, date_register=date_register, ip_address=ip)
         db.session.add(new_user)
         db.session.commit()
@@ -129,7 +126,7 @@ def register():
 
     return render_template('register.html', form=form)
 
-# Login Route - No Email Verification
+# Login Route
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
@@ -242,19 +239,16 @@ def add_crime():
 class Crime(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     crime_type = db.Column(db.String(255))
-    # Add other columns as needed
 
 # Define the State model
 class State(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(255))
-    # Add other columns as needed
 
 # Define the Victim model
 class Victim(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     victim_name = db.Column(db.String(255))
-    # Add other columns as needed
 
 # Define the Criminal model
 class Criminal(db.Model):
@@ -324,7 +318,6 @@ class District(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100), nullable=False)
     state_id = db.Column(db.Integer, db.ForeignKey('state.id'), nullable=False)
-    # Add other fields as needed
 
 class PoliceStation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -551,12 +544,6 @@ class dashboard_crimewise_year_range_data():
             # Count the number of times the crime occurred for each year
             count = db.session.query(Crime).filter(Crime.crime_id == self.crime_id, db.extract('year', Crime.date_time) == i).count()
             self.number_times_crime.append(count)
-
-
-
-
-
-
 
 
 
@@ -976,9 +963,6 @@ def dashboard_bar_graph():
     return render_template('/dashboard_bar_graph.html',first_year=year1,first_total_crime=first_total_crime,first_criminal_age_under18=first_criminal_age_under18,first_criminal_age_18_25=first_criminal_age_18_25,first_criminal_age_beyond_25=first_criminal_age_beyond_25,second_year=year2,second_total_crime=second_total_crime,second_criminal_age_under18=second_criminal_age_under18,second_criminal_age_18_25=second_criminal_age_18_25,second_criminal_age_beyond_25=second_criminal_age_beyond_25,first_crime_count=first_crime_count,second_crime_count=second_crime_count,max1=max1,max2=max2)
 
 
-
-
-
 @app.route('/dashboard_pi_graph',methods=['POST','GET'])
 @login_required
 def dashboard_pi_graph():
@@ -1020,18 +1004,6 @@ def dashboard_pi_graph():
         second_crime_count=second_crime_count.items()
 
     return render_template('/dashboard_pi_graph.html',year1=year1,year2=year2,first_crime_count=first_crime_count,second_crime_count=second_crime_count,max1=max1,max2=max2,sum1=sum1,sum2=sum2)
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -1094,7 +1066,6 @@ def upload_file():
             
             # Set Seaborn style
             sns.set_style('whitegrid')
-
 
             # Drop rows with missing data
             df.dropna(inplace=True)
